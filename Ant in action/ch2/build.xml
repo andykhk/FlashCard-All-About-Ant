@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project name="firstbuild" default="execute" >
+
+	 <target name="init">
+		 <mkdir dir="build/classes" />
+		 <mkdir dir="dist" />
+	 </target>
+
+	<target name="compile" depends="init">
+		<javac includeantruntime="false" 
+			srcdir="."
+			destdir="build/classes" 
+			 />
+		<!-- It would be useful for debug purpose as ant script mean to run automatically, log would come in kick when things went wrond need to debug. -->
+		<echo>compilation complete!</echo>
+	</target>
+
+
+	<target name="archive" depends="compile"
+			description="Creates the JAR file">			
+		<jar destfile="dist/project.jar"
+		basedir="build/classes" />
+	</target>
+
+	<target name="clean" depends="init"
+			description="Remove the temporary directories used">
+		<delete dir="build" />
+		<delete dir="dist" />
+		<delete dir="bin" />
+	</target> 
+
+
+	<target name="execute" depends="compile"
+			description="Runs the program">
+		<echo level="warning" message="running" />
+		<java
+			classname="org.ant.Main"
+			classpath="build/classes">
+			<arg value="a"/>
+			<arg value="b"/>
+			<arg file="."/>
+		</java>
+	</target>
+
+
+	<!-- Typed javac wrongly-->
+	<target name="incorrectSpell">
+		<javaccc includeantruntime="false" 
+			srcdir="./src" />
+		<echo>compilation complete!</echo>
+	</target>
+
+
+		<!-- Typed javac wrongly-->
+	<target name="noEndingTag">
+		<javaccc includeantruntime="false" srcdir="." />
+		<echo>compilation complete!</echo>
+	<!-- Please comment out below before run, in order to obtain a XML syntax error -->
+	</target>
+</project>
