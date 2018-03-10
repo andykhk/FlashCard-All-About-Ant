@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<project name="firstbuild" default="execute" >
+
+
+	<property name="build.classes.dir"
+		location="build/classes" />
+
+	<!-- 
+	Path can be reference via id field,
+	later of script it can be call via
+	  - <path refid="junit.path" /> when needed  
+
+	Fileset - Set of file under the same dir. (recursively)
+	-->
+	<path id="compile.classpath">
+		<!-- Simple path -->
+		<pathelement location="lib/junit.jar"/> 
+		<!-- Multiple path -->
+		<!-- <pathelement location="path1:path2:path3"/>  -->
+	</path>
+
+	<patternset>
+		<include name="**/*.gif"/>
+		<include name="**/*.jpg"/>
+		<patternset>
+			<exclude name="**/*.txt"/>
+			<exclude name="**/*.xml"/>
+		</patternset>
+	</patternset>
+
+
+
+	<mkdir dir="${build.classes.dir}"/>
+
+	<target name="init" >
+		<mkdir dir ="src/org"/>
+	</target>
+
+
+	<!-- Attribute used on pattern set can all be used as well on javac cmd -->
+	<target name="compile" >
+		<javac
+			destdir="${build.classes.dir}"
+			debug="true"
+			srcdir="src">
+		<exclude name ="org/test/**/.java"/>
+		<classpath refid="compile.classpath"/>
+		</javac>
+	</target>
+
+	<target name="copySrc" >
+		 <copy todir="src_new" includeemptydirs="false">
+            <fileset dir="src">
+              <not>
+                <present targetdir="currentfiles"/>
+              </not>
+            </fileset>
+            <!-- Only the file contain the text "hello" in the "org" dir are copyies to the current files dir -->
+            <fileset dir="src/org">
+            	<contains text="hello"/>
+            </fileset>
+		</copy>
+	</target>
+
+	<target name="time_stamp" >
+		 <tstamp>
+		 	<format property="dayofweek" pattern="EEEE"/>
+		 	<format property="normalDate" pattern="dd/MM/yyyy" />
+		 	<!-- ISO 8601 Timestamp -->
+		 	<format property="iso" pattern="yyyy-MM-dd'T'HH:mm:ss" />
+		 </tstamp>
+		 <!-- Date stamp -->
+
+
+		 <!-- The way u refer var on ant -->
+		 <echo message="It is ${dayofweek}"/>
+		 <echo message="Full date: ${normalDate}"/>
+		 <echo message="ISO Time: ${iso}"/>
+
+	</target>
+
+
+	<!-- ant -Dcopy.source=true copysource -->
+	<target name="copysource" depends="init" if="copy.source">
+		<copy todir="build/classes">
+        	<fileset dir="src"/>
+        </copy>
+	</target>
+
+	<target name="pattern" >
+		<patternset id="movie.files" includes="**/*.mov,**/*.mkv"/>
+
+		<patternset id="src.files">
+			<exclude name="**/*.java"/>
+			<exclude name="**/*.cpp"/>
+			<patternset refid="movie.files"/>
+		</patternset>
+		<echo message="src.files = ${toString:src.files}"/>
+	</target>
+
+</project>
