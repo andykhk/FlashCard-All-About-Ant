@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<project name="antInActionCh4" >
+	<target name="init">
+		<mkdir dir ="src"/>
+		<mkdir dir ="lib"/>
+		<mkdir dir ="test"/>
+		<mkdir dir ="bin"/>
+		<get src="http://central.maven.org/maven2/junit/junit/3.8.2/junit-3.8.2.jar" dest="lib/junit-3.8.2.jar" usetimestamp="true" />
+	</target>
+
+	<!-- Lib path -->
+	<path id="project-classpath">  
+        <fileset dir="lib" includes="*.jar" />  
+    </path>  
+
+    <!-- Lib location, not limted to junit.jar  -->
+    <path id="test.classpath">  
+        <fileset dir="lib" includes="*.jar" />  
+    </path>
+
+    <!-- List all the test-class that need to be perform. -->
+    <property name="test.suite"
+	 value="com.core.test.SimpleTest" />
+
+
+	<target name="compile_test"
+		description="Compile all .java file that included on both src || test folder.">
+		<javac destdir="bin">
+			<classpath refid="project-classpath" />  
+			<src path="src"/>
+			<src path="test"/>
+		</javac>
+	</target>
+
+
+	<target name="test_text" depends="compile_test"
+		description="Run given test case with on CMD (textui)" >
+		<echo level="warning" message="running" />
+		<java
+			classname="junit.textui.TestRunner"
+			classpath="bin;lib/junit-3.8.2.jar"
+			>
+			<arg value="com.core.test.SimpleTest"/>
+		</java>
+	</target>
+
+		<target name="test_gui" depends="compile_test"
+			description="Run given test case with on Swing UI (swingui)">
+		<echo level="warning" message="running" />
+		<java
+			classname="junit.swingui.TestRunner"
+			classpath="bin;lib/junit-3.8.2.jar"
+			>
+			<arg value="com.core.test.SimpleTest"/>
+		</java>
+	</target>
+
+
+
+	<!-- Need to specify Junit.jar location 
+	Optional flag:
+	 - printsummary="false" 
+	 - haltonfailure="true" -->
+	 <target name="test-basic" depends="compile_test"
+	 	description="The properway of launching test-suit with junit tag">
+		 <junit printsummary="true">
+			 <classpath refid="test.classpath"/>
+			 <test name="${test.suite}"/>
+		 </junit>
+	 </target>
+
+
+	 <!-- TBC: Generating HTML report -->
+
+	 <!-- TBC: Running a single test case -->
+	 <!-- TBC: Running Junit on Own JVM -->
+	 <!-- TBC: Passing information to test cases -->
+
+</project>
