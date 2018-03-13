@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<project name="antInActionCh5" >
+
+	<!-- Best practice for define path right begin the file then 
+	refer it later by ${var_name} syntax. -->
+	<property name="dist.dir" location="dist" />
+	<property name="dist.doc.dir" location="${dist.dir}/doc" />
+
+
+	<target 
+		name = "init"
+	>
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.doc.dir}" />
+	</target>
+
+	<target
+		name="clean">
+		<!-- Ant would halt the build with error when file can't be deleted, 
+		like empty dir || locked file some sort. In this case failonerror need
+		to be specify in order to let build move on. But still the warning would 
+		pop up anyway to notice that something went wrong. 
+
+		However if quiet set to true, which ant would decide to suppress and user wouldn't be notice at all. Which is equivalent of rm -q  under unix env.
+		
+		deleteonexit:
+		 - Tell the JVM try to delete the file again when the JVM is shut down.-->
+		<delete 
+			defaultexcludes="false"
+			failonerror="false" >
+
+			<fileset dir="${dist.dir}" includes="**/"/>
+		</delete>
+	</target>
+
+	<target
+		name="copy"
+		description="Copy readme to des"
+		depends="init">
+		<!-- if file name is not specify then remain unchange.
+	 	Also, it's a timestamp-aware process. Copy only newer one,
+	 	so in this case, copy task wouldn't proceed until readme.txt 
+	 	got update.-->
+		<copy file="readme.txt" todir="${dist.doc.dir}">
+
+			<!-- Replace word from template on the fly. -->
+			<filterset>
+				<filter token="name" value="Ant from chapter5!"/>
+			</filterset>
+		</copy>
+	</target>
+
+	
+
+	<target
+		name="mapper">
+
+		<mkdir dir="temp"/>
+		<copy 
+			file="readme.txt" 
+			todir="temp">
+			<!-- Apply mapper, identitymapper is set by default,
+			so no need to mention. 
+			
+			Flattern mapper
+			- copy multiple src to single end-point however if duplicate file name 
+			found, couldn't predict which one have copyed to the des. 
+
+			Glob mapper
+			- Gd for rename extension.
+
+			Regexp mapper
+			- Self explained.
+
+			Package mapper
+			- TBC
+
+			Merge mapper
+			- Only apply on <copy> action
+
+			Composite mapper (Concurrent)
+			- All file would apply each filter once. -> n to n realtionship
+
+			Chained Mapper (Seralize )
+			- Let you include multiple mapper in one shot.
+			-->
+			<globmapper from="*.jsp" to="*.jsp.bak" />
+		</copy> 
+
+
+	</target>
+
+
+	<!-- TBC: move, it's rare operation, safer to copy then delete. -->
+	<!-- TBC: Jar, make sure to cover the part of manifest-->
+	<!-- TBC: Un-Jar, used to verify the build and makr sure all files are in place.  -->
+	<!-- TBC: Sign Jar -->
+	<!-- TBC: Test Jar, run jar against Junit instead of class file -->
+	<!-- TBC: Package tar && related task -->
+</project>
